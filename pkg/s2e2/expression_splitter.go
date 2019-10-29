@@ -23,7 +23,7 @@ type expressionSplitter struct {
 	typeByValue  func(string) tokenType // External function to get token's type by its value.
 }
 
-// Creates new expression splitter. Returns error if the provided external function is nil.
+// Create new expression splitter. Returns error if the provided external function is nil.
 func newExpressionSplitter(typeByValue func(string) tokenType) (*expressionSplitter, error) {
 	if typeByValue == nil {
 		return nil, fmt.Errorf("Splitter: external function to get token type by its value is nil")
@@ -42,11 +42,11 @@ func newExpressionSplitter(typeByValue func(string) tokenType) (*expressionSplit
 func (s *expressionSplitter) SplitIntoTokens(expression string) ([]token, error) {
 	for _, symbol := range expression {
 		if err := s.processSymbol(symbol); err != nil {
-			return []token{}, err
+			return nil, err
 		}
 	}
 	if err := s.flushToken(); err != nil {
-		return []token{}, err
+		return nil, err
 	}
 	return s.foundTokens, nil
 }

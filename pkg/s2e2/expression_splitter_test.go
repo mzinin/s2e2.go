@@ -24,7 +24,7 @@ func TestExpressionSplitter_Positive_SplitByComma(test *testing.T) {
 	}
 
 	expression := "A, B"
-	expectedTokens := []token{token{atomType, "A"}, token{commaType, ","}, token{atomType, "B"}}
+	expectedTokens := []token{{atomType, "A"}, {commaType, ","}, {atomType, "B"}}
 
 	actualTokens, err := splitter.SplitIntoTokens(expression)
 	if err != nil {
@@ -48,11 +48,11 @@ func TestExpressionSplitter_Positive_SplitByBrackets(test *testing.T) {
 
 	expression := "(A, B)"
 	expectedTokens := []token{
-		token{leftBracketType, "("},
-		token{atomType, "A"},
-		token{commaType, ","},
-		token{atomType, "B"},
-		token{rightBracketType, ")"}}
+		{leftBracketType, "("},
+		{atomType, "A"},
+		{commaType, ","},
+		{atomType, "B"},
+		{rightBracketType, ")"}}
 
 	actualTokens, err := splitter.SplitIntoTokens(expression)
 	if err != nil {
@@ -75,10 +75,7 @@ func TestExpressionSplitter_Positive_QuotedAtom(test *testing.T) {
 	}
 
 	expression := "A, \"B C\""
-	expectedTokens := []token{
-		token{atomType, "A"},
-		token{commaType, ","},
-		token{atomType, "B C"}}
+	expectedTokens := []token{{atomType, "A"}, {commaType, ","}, {atomType, "B C"}}
 
 	actualTokens, err := splitter.SplitIntoTokens(expression)
 	if err != nil {
@@ -101,10 +98,7 @@ func TestExpressionSplitter_Positive_QuotedUntrimmedAtom(test *testing.T) {
 	}
 
 	expression := "A, \" B \""
-	expectedTokens := []token{
-		token{atomType, "A"},
-		token{commaType, ","},
-		token{atomType, " B "}}
+	expectedTokens := []token{{atomType, "A"}, {commaType, ","}, {atomType, " B "}}
 
 	actualTokens, err := splitter.SplitIntoTokens(expression)
 	if err != nil {
@@ -121,18 +115,5 @@ func TestExpressionSplitter_Negative_NilExternalFunction(test *testing.T) {
 		return
 	} else if err.Error() != "Splitter: external function to get token type by its value is nil" {
 		test.Errorf("Unexpected error text: %q", err.Error())
-	}
-}
-
-func compareTokens(actual, expected []token, test *testing.T) {
-	if len(actual) != len(expected) {
-		test.Errorf("Wrong output size %v instead of %v", len(actual), len(expected))
-		return
-	}
-	for i, value := range actual {
-		if value != expected[i] {
-			test.Errorf("Wrong output token %v instead of %v", value, expected[i])
-			return
-		}
 	}
 }
