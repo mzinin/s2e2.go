@@ -1,16 +1,17 @@
 package s2e2
 
-// Interface for splitting expression string into list of tokens.
+// tokenizer is the interface for splitting expression string into list of tokens.
 type tokenizer interface {
-	// Add function expected within expression.
+
+	// AddFunction adds function expected within expression.
 	// Returns error if functons's name is not unique.
 	AddFunction(function string) error
 
-	// Add operator expected within expression.
+	// AddOperator adds operator expected within expression.
 	// Returns error if operator's name is not unique.
 	AddOperator(operator string) error
 
-	// Split expression into tokens.
+	// Tokenize splits expression into tokens.
 	// Returns error if expression contains unknown symbol.
 	Tokenize(expression string) ([]token, error)
 }

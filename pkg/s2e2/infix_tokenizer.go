@@ -6,14 +6,14 @@ import (
 	"strings"
 )
 
-// Splits infix string expressions into list of tokens.
+// infixTokenizer splits infix string expressions into list of tokens.
 type infixTokenizer struct {
 	functions         map[string]bool         // Set of expected functions.
 	operators         map[string]bool         // Set of expected operators.
 	operatorsByLength map[int]map[string]bool // Operators sorted by their lengthes.
 }
 
-// Create new infix tokenizer.
+// newInfixTokenizer creates new infix tokenizer.
 func newInfixTokenizer() *infixTokenizer {
 	result := &infixTokenizer{}
 	result.functions = make(map[string]bool)
@@ -22,7 +22,7 @@ func newInfixTokenizer() *infixTokenizer {
 	return result
 }
 
-// Add function expected within expression.
+// AddFunction adds function expected within expression.
 // Returns error if functons's name is not unique.
 func (t *infixTokenizer) AddFunction(function string) error {
 	if err := t.checkUniqueness(function); err != nil {
@@ -33,7 +33,7 @@ func (t *infixTokenizer) AddFunction(function string) error {
 	return nil
 }
 
-// Add operator expected within expression.
+// AddOperator adds operator expected within expression.
 // Returns error if operator's name is not unique.
 func (t *infixTokenizer) AddOperator(operator string) error {
 	if err := t.checkUniqueness(operator); err != nil {
@@ -51,7 +51,7 @@ func (t *infixTokenizer) AddOperator(operator string) error {
 	return nil
 }
 
-// Split expression into tokens.
+// Tokenize splits expression into tokens.
 // Returns error if expression contains unknown symbol.
 func (t *infixTokenizer) Tokenize(expression string) ([]token, error) {
 	splitter, err := newExpressionSplitter(func(value string) tokenType {
@@ -72,7 +72,7 @@ func (t *infixTokenizer) Tokenize(expression string) ([]token, error) {
 	return refinedTokens, nil
 }
 
-// Check is function's or operator's name is unique.
+// checkUniqueness checks if function's or operator's name is unique.
 // Returns error if the name is not unique.
 func (t *infixTokenizer) checkUniqueness(entityName string) error {
 	if _, ok := t.functions[entityName]; ok {
@@ -84,7 +84,7 @@ func (t *infixTokenizer) checkUniqueness(entityName string) error {
 	return nil
 }
 
-// Get token type by its value.
+// tokenTypeByValue gets token type by its value.
 func (t *infixTokenizer) tokenTypeByValue(value string) tokenType {
 	if _, ok := t.operators[value]; ok {
 		return operatorType
@@ -95,7 +95,7 @@ func (t *infixTokenizer) tokenTypeByValue(value string) tokenType {
 	return expressionType
 }
 
-// Split all tokens by all expected operatos.
+// splitTokensByOperators splits all tokens by all expected operatos.
 func (t *infixTokenizer) splitTokensByOperators(tokens []token) []token {
 	var lengths []int
 	for length := range t.operatorsByLength {
@@ -115,7 +115,7 @@ func (t *infixTokenizer) splitTokensByOperators(tokens []token) []token {
 	return result
 }
 
-// Split all tokens by one operator.
+// splitTokensBySingleOperator splits all tokens by one operator.
 func (t *infixTokenizer) splitTokensBySingleOperator(tokens []token, operator string) []token {
 	result := make([]token, 0, len(tokens))
 
@@ -130,7 +130,7 @@ func (t *infixTokenizer) splitTokensBySingleOperator(tokens []token, operator st
 	return result
 }
 
-// Split one token by one operator.
+// splitSingleTokenBySingleOperator splits one token by one operator.
 func (t *infixTokenizer) splitSingleTokenBySingleOperator(tokenValue string, operator string) []token {
 	result := make([]token, 0)
 
@@ -155,7 +155,7 @@ func (t *infixTokenizer) splitSingleTokenBySingleOperator(tokenValue string, ope
 	return result
 }
 
-// Convert all EXPRESSION tokens into ATOM ones.
+// convertExpressionsIntoAtoms converts all EXPRESSION tokens into ATOM ones.
 func (t *infixTokenizer) convertExpressionsIntoAtoms(tokens []token) {
 	for i := range tokens {
 		if tokens[i].Type == expressionType {

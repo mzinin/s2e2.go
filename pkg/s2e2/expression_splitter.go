@@ -15,7 +15,7 @@ const (
 	backslashSymbol    = '\\'
 )
 
-// Splits expression into raw tokens.
+// expressionSplitter splits expression into raw tokens.
 type expressionSplitter struct {
 	insideQuotes bool                   // Flag of "inside quotes" state. If set it means that current symbol belongs to an ATOM.
 	currentToken string                 // Currently parsed token value.
@@ -23,7 +23,8 @@ type expressionSplitter struct {
 	typeByValue  func(string) tokenType // External function to get token's type by its value.
 }
 
-// Create new expression splitter. Returns error if the provided external function is nil.
+// newExpressionSplitter creates new expression splitter.
+// Returns error if the provided external function is nil.
 func newExpressionSplitter(typeByValue func(string) tokenType) (*expressionSplitter, error) {
 	if typeByValue == nil {
 		return nil, fmt.Errorf("Splitter: external function to get token type by its value is nil")
@@ -37,7 +38,7 @@ func newExpressionSplitter(typeByValue func(string) tokenType) (*expressionSplit
 	return result, nil
 }
 
-// Split expression into tokens by spaces and brackets.
+// SplitIntoTokens splits expression into tokens by spaces and brackets.
 // Returns error if expression contains unknown symbol or external function is nil.
 func (s *expressionSplitter) SplitIntoTokens(expression string) ([]token, error) {
 	for _, symbol := range expression {
@@ -51,7 +52,7 @@ func (s *expressionSplitter) SplitIntoTokens(expression string) ([]token, error)
 	return s.foundTokens, nil
 }
 
-// Process one symbol of the input expression.
+// processSymbol processes one symbol of the input expression.
 // Returns error if expression contains unknown symbol or external function is nil.
 func (s *expressionSplitter) processSymbol(symbol rune) error {
 	switch symbol {
@@ -66,7 +67,7 @@ func (s *expressionSplitter) processSymbol(symbol rune) error {
 	}
 }
 
-// Process one special symbol of the input expression.
+// processSpecialSymbol processes one special symbol of the input expression.
 // Returns error if expression contains unknown symbol or external function is nil.
 func (s *expressionSplitter) processSpecialSymbol(symbol rune) error {
 	if s.insideQuotes {
@@ -95,7 +96,7 @@ func (s *expressionSplitter) processSpecialSymbol(symbol rune) error {
 	return nil
 }
 
-// Process one quote symbol of the input expression.
+// processQuoteSymbol processes one quote symbol of the input expression.
 // Returns error if external function is nil.
 func (s *expressionSplitter) processQuoteSymbol(symbol rune) error {
 	if s.insideQuotes && s.isEscaped() {
@@ -110,7 +111,7 @@ func (s *expressionSplitter) processQuoteSymbol(symbol rune) error {
 	return nil
 }
 
-// Process one common symbol of the input expression.
+// processCommonSymbol processes one common symbol of the input expression.
 // Returns error if external function is nil.
 func (s *expressionSplitter) processCommonSymbol(symbol rune) error {
 	if s.insideQuotes || !unicode.IsSpace(symbol) {
@@ -121,7 +122,7 @@ func (s *expressionSplitter) processCommonSymbol(symbol rune) error {
 	return nil
 }
 
-// Add symbol to currently parsed token.
+// addSymbolToToken adds symbol to currently parsed token.
 func (s *expressionSplitter) addSymbolToToken(symbol rune) {
 	if symbol == quoteSymbol {
 		s.currentToken = s.currentToken[:len(s.currentToken)-1] + string(symbol)
@@ -130,7 +131,7 @@ func (s *expressionSplitter) addSymbolToToken(symbol rune) {
 	}
 }
 
-// Add current token if there is such to the list of found tokens.
+// flushToken adds current token if there is such to the list of found tokens.
 // Returns error if external function is nil.
 func (s *expressionSplitter) flushToken() error {
 	if !s.insideQuotes {
@@ -149,17 +150,17 @@ func (s *expressionSplitter) flushToken() error {
 	return nil
 }
 
-// Add token to the list of found tokens.
+// addFoundToken adds token to the list of found tokens.
 func (s *expressionSplitter) addFoundToken(typeOfToken tokenType, valueOfToken string) {
 	s.foundTokens = append(s.foundTokens, token{typeOfToken, valueOfToken})
 }
 
-// Check if current symbol is escaped, i.e. preceded by a backslash.
+// isEscaped checks if current symbol is escaped, i.e. preceded by a backslash.
 func (s *expressionSplitter) isEscaped() bool {
 	return len(s.currentToken) != 0 && s.currentToken[len(s.currentToken)-1] == backslashSymbol
 }
 
-// Get token type by its value and current state of the splitter.
+// tokenTypeByValue gets token type by its value and current state of the splitter.
 // Returns error if external function is nil.
 func (s *expressionSplitter) tokenTypeByValue(value string) (tokenType, error) {
 	if s.insideQuotes {
