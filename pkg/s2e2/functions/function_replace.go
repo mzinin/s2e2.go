@@ -6,6 +6,7 @@ import (
 )
 
 // FunctionReplace is REPLACE(<source>, <regex>, <replacement>)
+// Returns copy of source with all matches of regex replaced by replacement.
 type FunctionReplace struct {
 	BaseFunction
 }

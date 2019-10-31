@@ -1,6 +1,7 @@
 package functions
 
 // FunctionIf is IF(<conition>, <value1>, <value2>)
+// Returns value1 if boolean condition is true, and value2 otherwise.
 type FunctionIf struct {
 	BaseFunction
 }
