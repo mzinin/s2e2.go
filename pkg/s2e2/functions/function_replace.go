@@ -55,7 +55,7 @@ func (f *FunctionReplace) Result(arguments []interface{}) interface{} {
 
 	re, err := regexp.Compile(regex)
 	if err != nil {
-		return strings.ReplaceAll(source, regex, replacement)
+		return strings.Replace(source, regex, replacement, -1)
 	}
 	return re.ReplaceAllString(source, replacement)
 }
