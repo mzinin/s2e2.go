@@ -9,4 +9,7 @@ const (
 
 	// Priority of the operator ||.
 	operatorOrPriority int = 100
+
+	// Priority of the operator +.
+	operatorPlusPriority int = 500
 )
