@@ -4,6 +4,9 @@ const (
 	// Priority of the operator &&.
 	operatorAndPriority int = 200
 
+	// Priority of the operator ==.
+	operatorEqualPriority int = 300
+
 	// Priority of the operator !.
 	operatorNotPriority int = 600
 
