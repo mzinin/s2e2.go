@@ -10,6 +10,9 @@ const (
 	// Priority of the operator >.
 	operatorGreaterPriority int = 400
 
+	// Priority of the operator >=.
+	operatorGreaterOrEqualPriority int = 400
+
 	// Priority of the operator <.
 	operatorLessPriority int = 400
 
