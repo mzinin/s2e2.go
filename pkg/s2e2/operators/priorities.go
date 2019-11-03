@@ -7,6 +7,9 @@ const (
 	// Priority of the operator ==.
 	operatorEqualPriority int = 300
 
+	// Priority of the operator >.
+	operatorGreaterPriority int = 400
+
 	// Priority of the operator !=.
 	operatorNotEqualPriority int = 300
 
