@@ -10,3 +10,15 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+_test/*
+!_test/src/
+
+_test/src/*
+!_test/src/github.com
+
+_test/src/github.com/*
+!_test/src/github.com/mzinin
+
+_test/src/github.com/mzinin/*
+!_test/src/github.com/mzinin/s2e2.go
