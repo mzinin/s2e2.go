@@ -14,6 +14,11 @@ func MakeBaseFunction(derived DerivedFunction, name string, numberOfArguments in
 	return BaseFunction{derived, name, make([]interface{}, numberOfArguments)}
 }
 
+// SetDerived sets derived function.
+func (f *BaseFunction) SetDerived(derived DerivedFunction) {
+	f.derived = derived
+}
+
 // Name gets name of the function.
 func (f *BaseFunction) Name() string {
 	return f.name

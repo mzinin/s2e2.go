@@ -14,7 +14,7 @@ type FunctionReplace struct {
 // NewFunctionReplace creates an instance of FunctionReplace.
 func NewFunctionReplace() *FunctionReplace {
 	result := &FunctionReplace{MakeBaseFunction(nil, "REPLACE", 3)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

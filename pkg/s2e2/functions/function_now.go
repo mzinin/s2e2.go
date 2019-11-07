@@ -11,7 +11,7 @@ type FunctionNow struct {
 // NewFunctionNow creates an instance of FunctionNow.
 func NewFunctionNow() *FunctionNow {
 	result := &FunctionNow{MakeBaseFunction(nil, "NOW", 0)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

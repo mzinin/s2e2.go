@@ -9,7 +9,7 @@ type OperatorOr struct {
 // NewOperatorOr creates an instance of OperatorOr.
 func NewOperatorOr() *OperatorOr {
 	result := &OperatorOr{MakeBaseOperator(nil, "||", operatorOrPriority, 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

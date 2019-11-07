@@ -9,7 +9,7 @@ type FunctionIf struct {
 // NewFunctionIf creates an instance of FunctionIf.
 func NewFunctionIf() *FunctionIf {
 	result := &FunctionIf{MakeBaseFunction(nil, "IF", 3)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

@@ -13,7 +13,7 @@ type FunctionFormatDate struct {
 // NewFunctionFormatDate creates an instance of FunctionFormatDate.
 func NewFunctionFormatDate() *FunctionFormatDate {
 	result := &FunctionFormatDate{MakeBaseFunction(nil, "FORMAT_DATE", 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

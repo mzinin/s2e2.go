@@ -9,7 +9,7 @@ type OperatorNot struct {
 // NewOperatorNot creates an instance of OperatorNot.
 func NewOperatorNot() *OperatorNot {
 	result := &OperatorNot{MakeBaseOperator(nil, "!", operatorNotPriority, 1)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

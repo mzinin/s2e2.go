@@ -18,7 +18,7 @@ type FunctionAddDays struct {
 // NewFunctionAddDays creates an instance of FunctionAddDays.
 func NewFunctionAddDays() *FunctionAddDays {
 	result := &FunctionAddDays{MakeBaseFunction(nil, "ADD_DAYS", 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

@@ -9,7 +9,7 @@ type OperatorPlus struct {
 // NewOperatorPlus creates an instance of OperatorPlus.
 func NewOperatorPlus() *OperatorPlus {
 	result := &OperatorPlus{MakeBaseOperator(nil, "+", operatorPlusPriority, 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

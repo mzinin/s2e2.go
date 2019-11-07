@@ -9,7 +9,7 @@ type OperatorLessOrEqual struct {
 // NewOperatorLessOrEqual creates an instance of OperatorLessOrEqual.
 func NewOperatorLessOrEqual() *OperatorLessOrEqual {
 	result := &OperatorLessOrEqual{MakeBaseOperator(nil, "<=", operatorLessOrEqualPriority, 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

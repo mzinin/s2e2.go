@@ -9,7 +9,7 @@ type OperatorEqual struct {
 // NewOperatorEqual creates an instance of OperatorEqual.
 func NewOperatorEqual() *OperatorEqual {
 	result := &OperatorEqual{MakeBaseOperator(nil, "==", operatorEqualPriority, 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

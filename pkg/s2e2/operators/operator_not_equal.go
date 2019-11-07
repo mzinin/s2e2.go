@@ -9,7 +9,7 @@ type OperatorNotEqual struct {
 // NewOperatorNotEqual creates an instance of OperatorNotEqual.
 func NewOperatorNotEqual() *OperatorNotEqual {
 	result := &OperatorNotEqual{MakeBaseOperator(nil, "!=", operatorNotEqualPriority, 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

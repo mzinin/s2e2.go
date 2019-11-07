@@ -9,7 +9,7 @@ type OperatorGreater struct {
 // NewOperatorGreater creates an instance of OperatorGreater.
 func NewOperatorGreater() *OperatorGreater {
 	result := &OperatorGreater{MakeBaseOperator(nil, ">", operatorGreaterPriority, 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

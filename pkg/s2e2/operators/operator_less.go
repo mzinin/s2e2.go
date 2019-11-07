@@ -9,7 +9,7 @@ type OperatorLess struct {
 // NewOperatorLess creates an instance of OperatorLess.
 func NewOperatorLess() *OperatorLess {
 	result := &OperatorLess{MakeBaseOperator(nil, "<", operatorLessPriority, 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

@@ -15,6 +15,11 @@ func MakeBaseOperator(derived DerivedOperator, name string, priority int, number
 	return BaseOperator{derived, name, priority, make([]interface{}, numberOfArguments)}
 }
 
+// SetDerived sets derived function.
+func (o *BaseOperator) SetDerived(derived DerivedOperator) {
+	o.derived = derived
+}
+
 // Name gets the name of the operator.
 func (o *BaseOperator) Name() string {
 	return o.name

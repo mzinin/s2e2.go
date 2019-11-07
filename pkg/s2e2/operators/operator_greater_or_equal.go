@@ -9,7 +9,7 @@ type OperatorGreaterOrEqual struct {
 // NewOperatorGreaterOrEqual creates an instance of OperatorGreaterOrEqual.
 func NewOperatorGreaterOrEqual() *OperatorGreaterOrEqual {
 	result := &OperatorGreaterOrEqual{MakeBaseOperator(nil, ">=", operatorGreaterOrEqualPriority, 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 

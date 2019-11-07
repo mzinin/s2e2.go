@@ -9,7 +9,7 @@ type OperatorAnd struct {
 // NewOperatorAnd creates an instance of OperatorAnd.
 func NewOperatorAnd() *OperatorAnd {
 	result := &OperatorAnd{MakeBaseOperator(nil, "&&", operatorAndPriority, 2)}
-	result.derived = result
+	result.SetDerived(result)
 	return result
 }
 
