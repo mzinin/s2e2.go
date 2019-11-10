@@ -1,22 +1,22 @@
 package operators
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestOperatorAnd_Positive_CreateOperator_Name(test *testing.T) {
 	operator := NewOperatorAnd()
 	expectedName := "&&"
 
-	if operator.Name() != expectedName {
-		test.Errorf("Wrong operator name %v instead of %v", operator.Name(), expectedName)
-	}
+	assert.Equal(test, expectedName, operator.Name())
 }
 
 func TestOperatorAnd_Positive_CreateOperator_Priority(test *testing.T) {
 	operator := NewOperatorAnd()
 
-	if operator.Priority() != operatorAndPriority {
-		test.Errorf("Wrong operator priority %v instead of %v", operator.Name(), operatorAndPriority)
-	}
+	assert.Equal(test, operatorAndPriority, operator.Priority())
 }
 
 func TestOperatorAnd_Positive_TrueTrue_StackSize(test *testing.T) {
@@ -24,26 +24,16 @@ func TestOperatorAnd_Positive_TrueTrue_StackSize(test *testing.T) {
 	stack := []interface{}{true, true}
 	expectedStackSize := 1
 
-	if err := operator.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	if len(stack) != expectedStackSize {
-		test.Errorf("Wrong stack size %v instead of %v", len(stack), expectedStackSize)
-	}
+	assert.NoError(test, operator.Invoke(&stack))
+	assert.Equal(test, expectedStackSize, len(stack))
 }
 
 func TestOperatorAnd_Positive_TrueTrue_ResultType(test *testing.T) {
 	operator := NewOperatorAnd()
 	stack := []interface{}{true, true}
 
-	if err := operator.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	if _, ok := stack[0].(bool); !ok {
-		test.Errorf("Wrong result type %T instead of %T", stack[0], "")
-	}
+	assert.NoError(test, operator.Invoke(&stack))
+	assert.IsType(test, true, stack[0])
 }
 
 func TestOperatorAnd_Positive_TrueTrue_ResultValue(test *testing.T) {
@@ -51,13 +41,10 @@ func TestOperatorAnd_Positive_TrueTrue_ResultValue(test *testing.T) {
 	stack := []interface{}{true, true}
 	expectedValue := true
 
-	if err := operator.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, operator.Invoke(&stack))
 
-	if value, _ := stack[0].(bool); value != expectedValue {
-		test.Errorf("Wrong result value %v instead of %v", value, expectedValue)
-	}
+	value, _ := stack[0].(bool)
+	assert.Equal(test, expectedValue, value)
 }
 
 func TestOperatorAnd_Positive_TrueFalse_ResultValue(test *testing.T) {
@@ -65,13 +52,10 @@ func TestOperatorAnd_Positive_TrueFalse_ResultValue(test *testing.T) {
 	stack := []interface{}{true, false}
 	expectedValue := false
 
-	if err := operator.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, operator.Invoke(&stack))
 
-	if value, _ := stack[0].(bool); value != expectedValue {
-		test.Errorf("Wrong result value %v instead of %v", value, expectedValue)
-	}
+	value, _ := stack[0].(bool)
+	assert.Equal(test, expectedValue, value)
 }
 
 func TestOperatorAnd_Positive_FalseTrue_ResultValue(test *testing.T) {
@@ -79,13 +63,10 @@ func TestOperatorAnd_Positive_FalseTrue_ResultValue(test *testing.T) {
 	stack := []interface{}{false, true}
 	expectedValue := false
 
-	if err := operator.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, operator.Invoke(&stack))
 
-	if value, _ := stack[0].(bool); value != expectedValue {
-		test.Errorf("Wrong result value %v instead of %v", value, expectedValue)
-	}
+	value, _ := stack[0].(bool)
+	assert.Equal(test, expectedValue, value)
 }
 
 func TestOperatorAnd_Positive_FalseFalse_ResultValue(test *testing.T) {
@@ -93,13 +74,10 @@ func TestOperatorAnd_Positive_FalseFalse_ResultValue(test *testing.T) {
 	stack := []interface{}{false, false}
 	expectedValue := false
 
-	if err := operator.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, operator.Invoke(&stack))
 
-	if value, _ := stack[0].(bool); value != expectedValue {
-		test.Errorf("Wrong result value %v instead of %v", value, expectedValue)
-	}
+	value, _ := stack[0].(bool)
+	assert.Equal(test, expectedValue, value)
 }
 
 func TestOperatorAnd_Positive_MoreArguments_StackSize(test *testing.T) {
@@ -107,66 +85,51 @@ func TestOperatorAnd_Positive_MoreArguments_StackSize(test *testing.T) {
 	stack := []interface{}{"ARG", false, true}
 	expectedStackSize := 2
 
-	if err := operator.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	if len(stack) != expectedStackSize {
-		test.Errorf("Wrong stack size %v instead of %v", len(stack), expectedStackSize)
-	}
+	assert.NoError(test, operator.Invoke(&stack))
+	assert.Equal(test, expectedStackSize, len(stack))
 }
 
 func TestOperatorAnd_Negative_FewerArguments(test *testing.T) {
-	function := NewOperatorAnd()
+	operator := NewOperatorAnd()
 	stack := []interface{}{true}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseOperator: not enough arguments for operator "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := operator.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseOperator: not enough arguments for operator "+operator.Name(), err.Error())
 }
 
 func TestOperatorAnd_Negative_FirstArgumentWrongType(test *testing.T) {
-	function := NewOperatorAnd()
+	operator := NewOperatorAnd()
 	stack := []interface{}{"true", true}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseOperator: invalid arguments for operator "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := operator.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseOperator: invalid arguments for operator "+operator.Name(), err.Error())
 }
 
 func TestOperatorAnd_Negative_FirstArgumentNull(test *testing.T) {
-	function := NewOperatorAnd()
+	operator := NewOperatorAnd()
 	stack := []interface{}{nil, true}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseOperator: invalid arguments for operator "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := operator.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseOperator: invalid arguments for operator "+operator.Name(), err.Error())
 }
 
 func TestOperatorAnd_Negative_SecondArgumentWrongType(test *testing.T) {
-	function := NewOperatorAnd()
+	operator := NewOperatorAnd()
 	stack := []interface{}{true, "true"}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseOperator: invalid arguments for operator "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := operator.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseOperator: invalid arguments for operator "+operator.Name(), err.Error())
 }
 
 func TestOperatorAnd_Negative_SecondArgumentNull(test *testing.T) {
-	function := NewOperatorAnd()
+	operator := NewOperatorAnd()
 	stack := []interface{}{true, nil}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseOperator: invalid arguments for operator "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := operator.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseOperator: invalid arguments for operator "+operator.Name(), err.Error())
 }

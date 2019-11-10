@@ -14,22 +14,14 @@ import (
 
 func TestEvaluator_Positive_NothingAdded_SupportedFunctionsSize(test *testing.T) {
 	evaluator := NewEvaluator()
-	functions := evaluator.GetFunctions()
-	expectedSize := 0
 
-	if len(functions) != expectedSize {
-		test.Errorf("Wrong number of supported functions: %v instead of %v", len(functions), expectedSize)
-	}
+	assert.Equal(test, 0, len(evaluator.GetFunctions()))
 }
 
 func TestEvaluator_Positive_NothingAdded_SupportedOperatorsSize(test *testing.T) {
 	evaluator := NewEvaluator()
-	operators := evaluator.GetOperators()
-	expectedSize := 0
 
-	if len(operators) != expectedSize {
-		test.Errorf("Wrong number of supported operators: %v instead of %v", len(operators), expectedSize)
-	}
+	assert.Equal(test, 0, len(evaluator.GetOperators()))
 }
 
 func TestEvaluator_Positive_NothingAdded_EvaluationResult(test *testing.T) {
@@ -38,40 +30,22 @@ func TestEvaluator_Positive_NothingAdded_EvaluationResult(test *testing.T) {
 
 	value, err := evaluator.Evaluate(expression)
 
-	if err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-	if *value != expression {
-		test.Errorf("Wrong result %v instead of %v", *value, expression)
-	}
+	assert.NoError(test, err)
+	assert.Equal(test, expression, *value)
 }
 
 func TestEvaluator_Positive_AddFunction_SupportedFunctionsSize(test *testing.T) {
 	evaluator := NewEvaluator()
-	expectedSize := 1
 
-	if err := evaluator.AddFunction(newDummyFunction()); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	functions := evaluator.GetFunctions()
-	if len(functions) != expectedSize {
-		test.Errorf("Wrong number of supported functions: %v instead of %v", len(functions), expectedSize)
-	}
+	assert.NoError(test, evaluator.AddFunction(newDummyFunction()))
+	assert.Equal(test, len(evaluator.GetFunctions()), 1)
 }
 
 func TestEvaluator_Positive_AddOperator_SupportedOperatorsSize(test *testing.T) {
 	evaluator := NewEvaluator()
-	expectedSize := 1
 
-	if err := evaluator.AddOperator(newDummyOperator()); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	operators := evaluator.GetOperators()
-	if len(operators) != expectedSize {
-		test.Errorf("Wrong number of supported operators: %v instead of %v", len(operators), expectedSize)
-	}
+	assert.NoError(test, evaluator.AddOperator(newDummyOperator()))
+	assert.Equal(test, len(evaluator.GetOperators()), 1)
 }
 
 func TestEvaluator_Positive_AddFunction_VerifyTokenizer(test *testing.T) {
@@ -116,25 +90,15 @@ func TestEvaluator_Positive_AddOperator_VerifyTokenizer(test *testing.T) {
 func TestEvaluator_Positive_AddStandardFunctions_SupportedFunctionsSize(test *testing.T) {
 	evaluator := NewEvaluator()
 
-	if err := evaluator.AddStandardFunctions(); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	if len(evaluator.GetFunctions()) == 0 {
-		test.Errorf("Wrong number of supported functions: 0")
-	}
+	assert.NoError(test, evaluator.AddStandardFunctions())
+	assert.Greater(test, len(evaluator.GetFunctions()), 0)
 }
 
 func TestEvaluator_Positive_AddStandardOperators_SupportedOperatorsSize(test *testing.T) {
 	evaluator := NewEvaluator()
 
-	if err := evaluator.AddStandardOperators(); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	if len(evaluator.GetOperators()) == 0 {
-		test.Errorf("Wrong number of supported operators: 0")
-	}
+	assert.NoError(test, evaluator.AddStandardOperators())
+	assert.Greater(test, len(evaluator.GetOperators()), 0)
 }
 
 func TestEvaluator_Positive_Evaluate_VerifyConverter(test *testing.T) {
@@ -223,69 +187,53 @@ func TestEvaluator_Positive_NullAsResult_EvaluationResult(test *testing.T) {
 
 	evaluator := NewEvaluator()
 
-	if err := evaluator.AddStandardFunctions(); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-	if err := evaluator.AddStandardOperators(); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, evaluator.AddStandardFunctions())
+	assert.NoError(test, evaluator.AddStandardOperators())
 
 	value, err := evaluator.Evaluate(expression)
-	if err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
 
-	if value != nil {
-		test.Errorf("Wrong value %v instead of %v", value, nil)
-	}
+	assert.NoError(test, err)
+	assert.Nil(test, value)
 }
 
 func TestEvaluator_Negative_AddNullFunction(test *testing.T) {
 	evaluator := NewEvaluator()
 
-	if err := evaluator.AddFunction(nil); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "Evaluator: added function is empty" {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := evaluator.AddFunction(nil)
+
+	assert.Error(test, err)
+	assert.Equal(test, err.Error(), "Evaluator: added function is empty")
 }
 
 func TestEvaluator_Negative_AddNullOperator(test *testing.T) {
 	evaluator := NewEvaluator()
 
-	if err := evaluator.AddOperator(nil); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "Evaluator: added operator is empty" {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := evaluator.AddOperator(nil)
+
+	assert.Error(test, err)
+	assert.Equal(test, "Evaluator: added operator is empty", err.Error())
 }
 
 func TestEvaluator_Negative_TwoFunctionsWithTheSameName(test *testing.T) {
 	evaluator := NewEvaluator()
 
-	if err := evaluator.AddFunction(newDummyFunction()); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, evaluator.AddFunction(newDummyFunction()))
 
-	if err := evaluator.AddFunction(newDummyFunction()); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "Evaluator: function "+newDummyFunction().Name()+" is already added" {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := evaluator.AddFunction(newDummyFunction())
+
+	assert.Error(test, err)
+	assert.Equal(test, "Evaluator: function "+newDummyFunction().Name()+" is already added", err.Error())
 }
 
 func TestEvaluator_Negative_TwoOperatorsWithTheSameName(test *testing.T) {
 	evaluator := NewEvaluator()
 
-	if err := evaluator.AddOperator(newDummyOperator()); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, evaluator.AddOperator(newDummyOperator()))
 
-	if err := evaluator.AddOperator(newDummyOperator()); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "Evaluator: operator "+newDummyOperator().Name()+" is already added" {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := evaluator.AddOperator(newDummyOperator())
+
+	assert.Error(test, err)
+	assert.Equal(test, "Evaluator: operator "+newDummyOperator().Name()+" is already added", err.Error())
 }
 
 func TestEvaluator_Negative_UnpairedBracket(test *testing.T) {
@@ -322,7 +270,7 @@ func TestEvaluator_Negative_Evaluate_UnexpectedTokenType(test *testing.T) {
 
 	_, err := evaluator.Evaluate(expression)
 	assert.Error(test, err)
-	assert.Equal(test, err.Error(), fmt.Sprintf("Evaluator: unexpected token type %v", leftBracketType))
+	assert.Equal(test, fmt.Sprintf("Evaluator: unexpected token type %v", leftBracketType), err.Error())
 }
 
 func TestEvaluator_Negative_Evaluate_UnsupportedFunction(test *testing.T) {
@@ -430,4 +378,28 @@ func (m *mockedTokenizer) AddOperator(operator string) error {
 func (m *mockedTokenizer) Tokenize(expression string) ([]token, error) {
 	args := m.Called(expression)
 	return args.Get(0).([]token), args.Error(1)
+}
+
+func checkEvaluatorResult(expression, expectedValue string, test *testing.T) {
+	evaluator := NewEvaluator()
+
+	assert.NoError(test, evaluator.AddStandardFunctions())
+	assert.NoError(test, evaluator.AddStandardOperators())
+
+	value, err := evaluator.Evaluate(expression)
+
+	assert.NoError(test, err)
+	assert.Equal(test, expectedValue, *value)
+}
+
+func checkEvaluatorError(expression, expectedError string, test *testing.T) {
+	evaluator := NewEvaluator()
+
+	assert.NoError(test, evaluator.AddStandardFunctions())
+	assert.NoError(test, evaluator.AddStandardOperators())
+
+	_, err := evaluator.Evaluate(expression)
+
+	assert.Error(test, err)
+	assert.Equal(test, expectedError, err.Error())
 }

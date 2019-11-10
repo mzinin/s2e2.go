@@ -3,6 +3,8 @@ package functions
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -13,9 +15,7 @@ func TestFunctionAddDays_Positive_CreateFunction_Name(test *testing.T) {
 	function := NewFunctionAddDays()
 	expectedName := "ADD_DAYS"
 
-	if function.Name() != expectedName {
-		test.Errorf("Wrong function name %v instead of %v", function.Name(), expectedName)
-	}
+	assert.Equal(test, expectedName, function.Name())
 }
 
 func TestFunctionAddDays_Positive_GoodArguments_StackSize(test *testing.T) {
@@ -23,74 +23,49 @@ func TestFunctionAddDays_Positive_GoodArguments_StackSize(test *testing.T) {
 	stack := []interface{}{time.Now().UTC(), "1"}
 	expectedStackSize := 1
 
-	if err := function.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	if len(stack) != expectedStackSize {
-		test.Errorf("Wrong stack size %v instead of %v", len(stack), expectedStackSize)
-	}
+	assert.NoError(test, function.Invoke(&stack))
+	assert.Equal(test, expectedStackSize, len(stack))
 }
 
 func TestFunctionAddDays_Positive_GoodArguments_ResultType(test *testing.T) {
 	function := NewFunctionAddDays()
 	stack := []interface{}{time.Now().UTC(), "1"}
 
-	if err := function.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	if _, ok := stack[0].(time.Time); !ok {
-		test.Errorf("Wrong result type %T instead of %T", stack[0], "")
-	}
+	assert.NoError(test, function.Invoke(&stack))
+	assert.IsType(test, time.Time{}, stack[0])
 }
 
-func TestFunctionAddDays_Positive_SecondArgumentPositive_ResultType(test *testing.T) {
+func TestFunctionAddDays_Positive_SecondArgumentPositive_ResultValue(test *testing.T) {
 	function := NewFunctionAddDays()
 	firstArgument := time.Date(2019, 7, 13, 12, 15, 0, 0, time.UTC)
 	stack := []interface{}{firstArgument, "1"}
 
-	if err := function.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, function.Invoke(&stack))
 
-	result, _ := stack[0].(time.Time)
-
-	if result.Unix()-firstArgument.Unix() != secondsPerDay {
-		test.Errorf("Wrong result value %v", result)
-	}
+	value, _ := stack[0].(time.Time)
+	assert.Equal(test, secondsPerDay, value.Unix()-firstArgument.Unix())
 }
 
-func TestFunctionAddDays_Positive_SecondArgumentZero_ResultType(test *testing.T) {
+func TestFunctionAddDays_Positive_SecondArgumentZero_ResultValue(test *testing.T) {
 	function := NewFunctionAddDays()
 	firstArgument := time.Date(2019, 7, 13, 12, 15, 0, 0, time.UTC)
 	stack := []interface{}{firstArgument, "0"}
 
-	if err := function.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, function.Invoke(&stack))
 
-	result, _ := stack[0].(time.Time)
-
-	if result != firstArgument {
-		test.Errorf("Wrong result value %v instead of %v", result, firstArgument)
-	}
+	value, _ := stack[0].(time.Time)
+	assert.Equal(test, firstArgument, value)
 }
 
-func TestFunctionAddDays_Positive_SecondArgumentNegative_ResultType(test *testing.T) {
+func TestFunctionAddDays_Positive_SecondArgumentNegative_ResultValue(test *testing.T) {
 	function := NewFunctionAddDays()
 	firstArgument := time.Date(2019, 7, 13, 12, 15, 0, 0, time.UTC)
 	stack := []interface{}{firstArgument, "-1"}
 
-	if err := function.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
+	assert.NoError(test, function.Invoke(&stack))
 
-	result, _ := stack[0].(time.Time)
-
-	if firstArgument.Unix()-result.Unix() != secondsPerDay {
-		test.Errorf("Wrong result value %v", result)
-	}
+	value, _ := stack[0].(time.Time)
+	assert.Equal(test, secondsPerDay, firstArgument.Unix()-value.Unix())
 }
 
 func TestFunctionAddDays_Positive_MoreArguments_StackSize(test *testing.T) {
@@ -98,77 +73,60 @@ func TestFunctionAddDays_Positive_MoreArguments_StackSize(test *testing.T) {
 	stack := []interface{}{"ARG", time.Now().UTC(), "1"}
 	expectedStackSize := 2
 
-	if err := function.Invoke(&stack); err != nil {
-		test.Errorf("Unexpected error %v", err)
-	}
-
-	if len(stack) != expectedStackSize {
-		test.Errorf("Wrong stack size %v instead of %v", len(stack), expectedStackSize)
-	}
+	assert.NoError(test, function.Invoke(&stack))
+	assert.Equal(test, expectedStackSize, len(stack))
 }
 
 func TestFunctionAddDays_Negative_FewerArguments(test *testing.T) {
 	function := NewFunctionAddDays()
 	stack := []interface{}{time.Now().UTC()}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseFunction: not enough arguments for function "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := function.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseFunction: not enough arguments for function "+function.Name(), err.Error())
 }
 
 func TestFunctionAddDays_Negative_FirstArgumentWrongType(test *testing.T) {
 	function := NewFunctionAddDays()
 	stack := []interface{}{"2019-07-13 00:00:00", "1"}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseFunction: invalid arguments for function "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := function.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseFunction: invalid arguments for function "+function.Name(), err.Error())
 }
 
 func TestFunctionAddDays_Negative_FirstArgumentNull(test *testing.T) {
 	function := NewFunctionAddDays()
 	stack := []interface{}{nil, "1"}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseFunction: invalid arguments for function "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := function.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseFunction: invalid arguments for function "+function.Name(), err.Error())
 }
 
 func TestFunctionAddDays_Negative_SecondArgumentWrongType(test *testing.T) {
 	function := NewFunctionAddDays()
 	stack := []interface{}{time.Now().UTC(), 1}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseFunction: invalid arguments for function "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := function.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseFunction: invalid arguments for function "+function.Name(), err.Error())
 }
 
 func TestFunctionAddDays_Negative_SecondArgumentWrongValue(test *testing.T) {
 	function := NewFunctionAddDays()
 	stack := []interface{}{time.Now().UTC(), "A"}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseFunction: invalid arguments for function "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := function.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseFunction: invalid arguments for function "+function.Name(), err.Error())
 }
 
 func TestFunctionAddDays_Negative_SecondArgumentNull(test *testing.T) {
 	function := NewFunctionAddDays()
 	stack := []interface{}{time.Now().UTC(), nil}
 
-	if err := function.Invoke(&stack); err == nil {
-		test.Errorf("No expected error")
-	} else if err.Error() != "BaseFunction: invalid arguments for function "+function.Name() {
-		test.Errorf("Unexpected error text: %q", err.Error())
-	}
+	err := function.Invoke(&stack)
+	assert.Error(test, err)
+	assert.Equal(test, "BaseFunction: invalid arguments for function "+function.Name(), err.Error())
 }
